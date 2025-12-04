@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weed Grinder Game</title>
+        <style>
+            body {
+                background-color: #f5f5f5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                position: relative;
+                width: 700px;
+                height: 450px;
+                background-color: #eaeaea;
+                border-radius: 10px;
+                border: 2px solid #ccc;
+                overflow: hidden;
+            }
+
+            #weedSpawn {
+                position: absolute;
+                top: 40px;
+                left: 40px;
+                width: 120px;
+                height: 120px;
+                background-image: url(weed.png);
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                cursor: grab;
+            }
+
+            #grinder {
+                position: absolute;
+                bottom: 50px;
+                right: 60px;
+                width: 150px;
+                height: 150px;
+                background-image: url(kilian-seiler-GuclMIH9vSA-unsplash.jpg);
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                cursor: pointer;
+            }
+
+            #pile {
+                position: absolute;
+                bottom: 50px;
+                right: 250px;
+                width: 20px;
+                height: 20px;
+                background-color: green;
+                opacity: 0.8;
+                border-radius: 50%;
+                display: none;
+                transition: width 0.3s, height 0.3s;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="weedSpawn" draggable="true"></div>
+
+            <div id="grinder"></div>
+
+            <div id="pile"></div>
+        </div>
+
+        <script>
+            let pileSize = 0
+
+            document
+                .getElementById("weedSpawn")
+                .addEventListener("dragstart", function (e) {
+                    const clone = document.createElement("div")
+                    clone.className = "weedClone"
+                    clone.style.position = "absolute"
+                    clone.style.width = "120px"
+                    clone.style.height = "120px"
+                    clone.style.backgroundImage = this.style.backgroundImage
+                    clone.style.backgroundSize = "contain"
+                    clone.style.backgroundRepeat = "no-repeat"
+                    clone.style.backgroundPosition = "center"
+
+                    const cloneID = "clone-" + Date.now()
+                    clone.id = cloneID
+                    document.body.appendChild(clone)
+
+                    e.dataTransfer.setData("text/plain", cloneID)
+                })
+
+            const grinder = document.getElementById("grinder")
+            grinder.addEventListener("dragover", (e) => e.preventDefault())
+
+            grinder.addEventListener("drop", (e) => {
+                e.preventDefault()
+                const cloneID = e.dataTransfer.getData("text/plain")
+                const clone = document.getElementById(cloneID)
+
+                if (clone) {
+                    clone.remove()
+
+                    pileSize += 20
+
+                    const pile = document.getElementById("pile")
+                    pile.style.display = "block"
+                    pile.style.width = pileSize + "px"
+                    pile.style.height = pileSize + "px"
+                }
+            })
+
+            grinder.addEventListener("click", () => {
+                pileSize = 0
+                const pile = document.getElementById("pile")
+                pile.style.display = "none"
+                pile.style.width = "20px"
+                pile.style.height = "20px"
+            })
+        </script>
+    </body>
+</html>
